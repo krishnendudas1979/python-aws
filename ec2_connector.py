@@ -13,8 +13,8 @@ import datetime
 
 # bucket_name = input("Enter s3 Bucket  name : ")
 operation = input("Enter the type of operation u want to do :-")
-os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAIM7FUUWPXTWFFQ5A'
-os.environ['AWS_SECRET_ACCESS_KEY'] = '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'
+os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAJSKKKXBPD6OEF6PA'
+os.environ['AWS_SECRET_ACCESS_KEY'] = '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'
 
 env_var = os.environ
 aws_access_key_id_env = env_var['AWS_ACCESS_KEY_ID']
@@ -47,11 +47,12 @@ class Ec2InstanceMgm:
                         if sub_itr['Tags'][0]['Key'] == 'Name':
                             print(
                                 'Instance name {0} with instance id as {1} is in state {2}. The image type is {3} '
-                                'and instance type {4}'.format(sub_itr['Tags'][0]['Value'],
-                                                               sub_itr['InstanceId'],
-                                                               ec2_state,
-                                                               sub_itr['ImageId'],
-                                                               sub_itr['InstanceType']))
+                                'and instance type {4} {5}'.format(sub_itr['Tags'][0]['Value'],
+                                                                   sub_itr['InstanceId'],
+                                                                   ec2_state,
+                                                                   sub_itr['ImageId'],
+                                                                   sub_itr['InstanceType'],
+                                                                   sub_itr['PublicIpAddress']))
 
     def describe_particular_instance(self, ec2_instance_ids):
         response = self.ec2_client.describe_instances(InstanceIds=[ec2_instance_ids])
@@ -272,7 +273,7 @@ class Ec2InstanceMgm:
                         print(response)
                         for itr in response:
                             while True:
-                                if describe_particular_instance(itr.id) == 'running':
+                                if self.describe_particular_instance(itr.id) == 'running':
                                     print('The instance with instance id is state {}'.format(itr.id, response))
                                     break
                             print("waiting for 15 seconds")
