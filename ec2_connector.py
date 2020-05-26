@@ -13,8 +13,8 @@ import datetime
 
 # bucket_name = input("Enter s3 Bucket  name : ")
 operation = input("Enter the type of operation u want to do :-")
-os.environ['AWS_ACCESS_KEY_ID'] = 'AKIAJSKKKXBPD6OEF6PA'
-os.environ['AWS_SECRET_ACCESS_KEY'] = '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'
+os.environ['AWS_ACCESS_KEY_ID'] = ''
+os.environ['AWS_SECRET_ACCESS_KEY'] = ''
 
 env_var = os.environ
 aws_access_key_id_env = env_var['AWS_ACCESS_KEY_ID']

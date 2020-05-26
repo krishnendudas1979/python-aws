@@ -7,8 +7,8 @@ bucket_name = input("Enter s3 Bucket  name : ")
 #myawsbucket1979
 #portal-bucket-source
 env_var = os.environ
-os.environ['AWS_ACCESS_KEY_ID']='AKIAIM7FUUWPXTWFFQ5A'
-os.environ['AWS_SECRET_ACCESS_KEY']='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'
+os.environ['AWS_ACCESS_KEY_ID']=''
+os.environ['AWS_SECRET_ACCESS_KEY']=''
 
 aws_access_key_id_env= env_var['AWS_ACCESS_KEY_ID']
 aws_secret_access_key_env=env_var['AWS_SECRET_ACCESS_KEY']
