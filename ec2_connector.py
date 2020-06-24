@@ -12,51 +12,53 @@ from os import path
 import datetime
 
 # bucket_name = input("Enter s3 Bucket  name : ")
-operation = input("Enter the type of operation u want to do :-")
-os.environ['AWS_ACCESS_KEY_ID'] = ''
-os.environ['AWS_SECRET_ACCESS_KEY'] = ''
+from aws_base import aws_base
 
-env_var = os.environ
-aws_access_key_id_env = env_var['AWS_ACCESS_KEY_ID']
-aws_secret_access_key_env = env_var['AWS_SECRET_ACCESS_KEY']
+operation = input("Enter the type of operation u want to do for ec2:-")
 
-
-class Ec2InstanceMgm:
+class Ec2InstanceMgm(aws_base):
     def __init__(self):
-        self.image_type = 'ami-02d0ea44ae3fe9561'
-        self.instance_type = 't2.micro'
-        self.region_name = 'us-west-2'
-        # AvailabilityZone = 'us-west-2b'
-        self.IPv4_CIDR = '172.31.0.0/16'
-        self.ec2_client = boto3.client('ec2', aws_access_key_id=aws_access_key_id_env,
-                                       aws_secret_access_key=aws_secret_access_key_env, region_name=self.region_name)
-        self.ec2_resource = boto3.resource('ec2', aws_access_key_id=aws_access_key_id_env,
-                                           aws_secret_access_key=aws_secret_access_key_env,
-                                           region_name=self.region_name)
+        super().__init__()
 
-    def describe_all_instance(self):
+    def describe_all_instance(self, ec2_instance_name=None):
         response = self.ec2_client.describe_instances()
         ec2_state = None
+        # print(response)
         if response['ResponseMetadata']['HTTPStatusCode'] == 200:
             for itr in response['Reservations']:
                 for sub_itr in itr['Instances']:
-                    # print(sub_itr)
                     if 'State' in sub_itr:
                         ec2_state = sub_itr['State']['Name']
                     if 'Tags' in sub_itr:
-                        if sub_itr['Tags'][0]['Key'] == 'Name':
+                        if sub_itr['Tags'][0]['Key'].lower() == 'name':
                             print(
                                 'Instance name {0} with instance id as {1} is in state {2}. The image type is {3} '
-                                'and instance type {4} {5}'.format(sub_itr['Tags'][0]['Value'],
-                                                                   sub_itr['InstanceId'],
-                                                                   ec2_state,
-                                                                   sub_itr['ImageId'],
-                                                                   sub_itr['InstanceType'],
-                                                                   sub_itr['PublicIpAddress']))
+                                'and instance type {4}'.format(sub_itr['Tags'][0]['Value'],
+                                                               sub_itr['InstanceId'],
+                                                               ec2_state,
+                                                               sub_itr['ImageId'],
+                                                               sub_itr['InstanceType']))
+                                                               # sub_itr['PublicIpAddress']))
+
+                            if sub_itr['Tags'][0]['Value'] == ec2_instance_name and ec2_state == 'stopped':
+                                return sub_itr['InstanceId']
+        return None
+
+    # def describe_particular_instance(self, ec2_instance_name):
+    #     response = self.ec2_client.describe_instances(InstanceIds=[ec2_instance_ids])
+    #     ec2_state = None
+    #     print(response)
+    #     if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+    #         for itr in response['Reservations']:
+    #             for sub_itr in itr['Instances']:
+    #                 if 'State' in sub_itr:
+    #                     ec2_state = sub_itr['State']['Name']
+    #     return ec2_state
 
     def describe_particular_instance(self, ec2_instance_ids):
         response = self.ec2_client.describe_instances(InstanceIds=[ec2_instance_ids])
         ec2_state = None
+        print(response)
         if response['ResponseMetadata']['HTTPStatusCode'] == 200:
             for itr in response['Reservations']:
                 for sub_itr in itr['Instances']:
@@ -76,6 +78,7 @@ class Ec2InstanceMgm:
                     print(itr)
                 while True:
                     response = self.describe_particular_instance(itr['InstanceId'])
+                    print(response)
                     if response == 'running':
                         print('The instance with instance id is state {}'.format(itr['InstanceId'], response))
                         break
